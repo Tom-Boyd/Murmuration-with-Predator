@@ -64,15 +64,15 @@ public class Initialise : MonoBehaviour
         }
 
         //Setup Camera
-        Cam cam = Instantiate(camPrefab, flock.focalPoint, camPrefab.transform.rotation);
+        cam = Instantiate(camPrefab, flock.focalPoint, camPrefab.transform.rotation);
         cam.Initialise(flock, flock.agents[0].transform, flock.agents[0].transform, predatorAgent.transform);
     }
 
     public void Reset()
     {
-        // Delete flock and predator
         flock.DeleteFlock();
         Destroy(predatorAgent.gameObject);
+        Destroy(cam.gameObject);
         Start();
     }
 }
