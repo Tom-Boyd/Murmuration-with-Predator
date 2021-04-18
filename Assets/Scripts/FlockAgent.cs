@@ -24,7 +24,8 @@ public class FlockAgent : MonoBehaviour
     public void Boid()
     {
         this.context = flock.GetNearbyStarlings(this);
-        Move(CalculateBoidForce());
+        if (context != null)
+            Move(CalculateBoidForce());
     }
 
     private Vector3 CalculateBoidForce()

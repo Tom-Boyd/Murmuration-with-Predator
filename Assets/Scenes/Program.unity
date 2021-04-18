@@ -562,6 +562,7 @@ GameObject:
   - component: {fileID: 1986423042}
   - component: {fileID: 1986423041}
   - component: {fileID: 1986423043}
+  - component: {fileID: 1986423044}
   m_Layer: 0
   m_Name: Program
   m_TagString: Untagged
@@ -599,6 +600,7 @@ MonoBehaviour:
   agentDensity: 0.004
   dataStorage: {fileID: 1986423041}
   initialise: {fileID: 1986423042}
+  grid: {fileID: 1986423044}
 --- !u!4 &1986423040
 Transform:
   m_ObjectHideFlags: 0
@@ -639,6 +641,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dataStorage: {fileID: 1986423041}
+  grid: {fileID: 1986423044}
   flock: {fileID: 1986423039}
   flockAgent: {fileID: 5345235785538630195, guid: cdbdb5d58ee43ff429431e216e914d00,
     type: 3}
@@ -661,3 +664,17 @@ MonoBehaviour:
   flock: {fileID: 1986423039}
   dataStorage: {fileID: 1986423041}
   initialise: {fileID: 1986423042}
+--- !u!114 &1986423044
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1986423038}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b212a3e41abbef47ab5b333ee404d39, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cellSize: 2
+  gridSize: 10000

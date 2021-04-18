@@ -20,13 +20,14 @@ public class Flock : MonoBehaviour
     public float speed = 1f;
     public float predatorDetectionDist = 20f;
     public float turnSpeed = 0.5f;
-    public float agentDensity = 0.004f;
+    public float agentDensity = 0.01f;
 
     const float hardSphere = 0.2f;
     const float blindAngle = 180 - (9f / 2);
 
     public DataStorage dataStorage;
     public Initialise initialise;
+    public Grid grid;
 
     void Update()
     {
@@ -36,6 +37,7 @@ public class Flock : MonoBehaviour
             foreach (FlockAgent agent in agents)
             {
                 agent.Boid();
+                grid.UpdatePosition(int.Parse(agent.gameObject.name), agent.transform.position);
             }
         }
     }
@@ -61,10 +63,17 @@ public class Flock : MonoBehaviour
 
     public List<FlockAgent> GetNearbyStarlings(FlockAgent agent)
     {
-        List<FlockAgent> context = new List<FlockAgent>();
+        List<FlockAgent> cellBoids = new List<FlockAgent>();
+        List<int> boidIndexes = grid.GetNeighbours(int.Parse(agent.gameObject.name));
+
+        foreach (int i in boidIndexes) {
+            cellBoids.Add(agents[i]);
+        }
+
         var closeAgents = new Dictionary<FlockAgent, float>();
 
-        foreach (FlockAgent a in agents)
+        List<FlockAgent> context = new List<FlockAgent>();
+        foreach (FlockAgent a in cellBoids)
         {
             if (agent.name == a.name) continue; //Ignore itself
             float distance = Vector3.Distance(agent.transform.position, a.transform.position);
@@ -91,11 +100,12 @@ public class Flock : MonoBehaviour
             }
             if (closeAgents.Count == neighbourToConsider) break;
         }
-
+        
         foreach (KeyValuePair<FlockAgent, float> pair in closeAgents)
         {
             context.Add(pair.Key);
         }
+
         return context;
     }
 }

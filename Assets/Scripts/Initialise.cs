@@ -4,6 +4,7 @@ using System.Collections;
 public class Initialise : MonoBehaviour
 {
     public DataStorage dataStorage;
+    public Grid grid;
     public Flock flock;
     public FlockAgent flockAgent;
     public PredatorAgent predatorPrefab;
@@ -48,19 +49,21 @@ public class Initialise : MonoBehaviour
         predatorAgent.Initialize(flock);
 
         //Spawn in the flock of birds
-        for (int i = 1; i <= flock.startingCount; i++)
+        for (int i = 0; i < flock.startingCount; i++)
         {
+            Vector3 pos = (Random.insideUnitSphere * flock.startingCount * flock.agentDensity * 5) + flock.focalPoint;
             FlockAgent starling = Instantiate(
                 flockAgent,
-                (Random.insideUnitSphere * flock.startingCount * flock.agentDensity * 5) + flock.focalPoint,
+                pos,
                 Random.rotation,
                 transform
                 );
-            starling.name = "Agent " + i;
+            starling.name = ""+i;
             starling.Initialize(flock, predatorAgent);
             flock.agents.Add(starling);
             flock.agentsTransform.Add(starling.transform);
             StartCoroutine(starling.starlingAnimate(starling.GetComponentInChildren<Animator>()));
+            grid.Populate(i, pos);
         }
 
         //Setup Camera
@@ -73,6 +76,7 @@ public class Initialise : MonoBehaviour
         flock.DeleteFlock();
         Destroy(predatorAgent.gameObject);
         Destroy(cam.gameObject);
+        grid.Clear();
         Start();
     }
 }

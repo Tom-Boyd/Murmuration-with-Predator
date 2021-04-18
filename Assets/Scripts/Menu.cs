@@ -84,8 +84,8 @@ public class Menu : MonoBehaviour
             //Flock Size
             int y = 50;
             GUI.Label(new Rect(130, y + 10, 100, 30), "0");
-            GUI.Label(new Rect(210, y + 10, 100, 30), "500");
-            flock.startingCount = Mathf.RoundToInt(GUI.HorizontalSlider(new Rect(130, y + 5, 100, 30), flock.startingCount, 1, 500));
+            GUI.Label(new Rect(210, y + 10, 100, 30), "2000");
+            flock.startingCount = Mathf.RoundToInt(GUI.HorizontalSlider(new Rect(130, y + 5, 100, 30), flock.startingCount, 1, 2000));
             GUI.Label(new Rect(235, y, 120, 30), flock.startingCount.ToString());
             if (GUI.Button(new Rect(5, y, 120, 30), "Flock Size Reset"))
             {
