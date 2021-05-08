@@ -286,8 +286,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e95c4e10eb59ff48b2eeb9478d441a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hoverPoint: {x: 0, y: 0, z: 0}
   velocity: {x: 0, y: 0, z: 0}
+  hoverSpeed: 0.2
+  acceleration: 5
+  stoopTurnSpeed: 3
+  hoverTurnSpeed: 2
+  hoverCircleSpeed: 0.2
+  hoverCircleRadius: 2
 --- !u!1 &2418441986235943523
 GameObject:
   m_ObjectHideFlags: 0

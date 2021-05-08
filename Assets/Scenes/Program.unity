@@ -545,6 +545,11 @@ PrefabInstance:
       propertyPath: far clip plane
       value: 1000
       objectReference: {fileID: 0}
+    - target: {fileID: 3394149406315008045, guid: 0e6e30371431984409b234908efea84c,
+        type: 3}
+      propertyPath: near clip plane
+      value: 0.01
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 3394149406315008044, guid: 0e6e30371431984409b234908efea84c, type: 3}
     - {fileID: 3394149406315008043, guid: 0e6e30371431984409b234908efea84c, type: 3}
@@ -595,12 +600,15 @@ MonoBehaviour:
   predatorWeight: 1
   focalPointWeight: 1
   speed: 1
+  acceleration: 5
   predatorDetectionDist: 20
   turnSpeed: 0.5
-  agentDensity: 0.004
+  agentDensity: 0.0002
+  runSimulation: 0
   dataStorage: {fileID: 1986423041}
   initialise: {fileID: 1986423042}
   grid: {fileID: 1986423044}
+  predatorAgent: {fileID: 0}
 --- !u!4 &1986423040
 Transform:
   m_ObjectHideFlags: 0
@@ -676,5 +684,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b212a3e41abbef47ab5b333ee404d39, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cellSize: 2
+  cellSize: 1
   gridSize: 10000

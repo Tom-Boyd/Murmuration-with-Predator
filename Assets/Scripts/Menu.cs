@@ -10,9 +10,10 @@ public class Menu : MonoBehaviour
     public static Menu instance;
 
     public static float predMoveSpeed = 0.3f;
-    public static float predMoveTurnSpeed = 1.5f;
+    public static float predMoveAcceleration = 2.5f;
     public static float predHoverHeight = 200f;
     public static float predStoopSpeed = 1.0f;
+    public static float predStoopAcceleration = 5f;
 
     public Flock flock;
     public DataStorage dataStorage;
@@ -80,12 +81,12 @@ public class Menu : MonoBehaviour
 
         if (settingsType == 0)
         {
-            GUI.Box(new Rect(0, 30, 265, 480), "Flock Settings");
+            GUI.Box(new Rect(0, 30, 265, 450), "Flock Settings");
             //Flock Size
             int y = 50;
-            GUI.Label(new Rect(130, y + 10, 100, 30), "0");
-            GUI.Label(new Rect(210, y + 10, 100, 30), "2000");
-            flock.startingCount = Mathf.RoundToInt(GUI.HorizontalSlider(new Rect(130, y + 5, 100, 30), flock.startingCount, 1, 2000));
+            GUI.Label(new Rect(130, y + 10, 100, 30), "1");
+            GUI.Label(new Rect(210, y + 10, 100, 30), "5000");
+            flock.startingCount = Mathf.RoundToInt(GUI.HorizontalSlider(new Rect(130, y + 5, 100, 30), flock.startingCount, 1, 5000));
             GUI.Label(new Rect(235, y, 120, 30), flock.startingCount.ToString());
             if (GUI.Button(new Rect(5, y, 120, 30), "Flock Size Reset"))
             {
@@ -95,19 +96,19 @@ public class Menu : MonoBehaviour
 
             //Flock Speed
             y += 35;
-            GUI.Label(new Rect(130, y + 10, 100, 30), "0");
-            GUI.Label(new Rect(210, y + 10, 100, 30), "1");
-            flock.speed = GUI.HorizontalSlider(new Rect(130, y + 5, 100, 30), flock.speed, 0.0f, 1.0f);
-            GUI.Label(new Rect(5, y, 120, 30), "Speed");
+            GUI.Label(new Rect(130, y + 10, 100, 30), "2");
+            GUI.Label(new Rect(210, y + 10, 100, 30), "10");
+            flock.speed = GUI.HorizontalSlider(new Rect(130, y + 5, 100, 30), flock.speed, 2f, 10f);
+            GUI.Label(new Rect(5, y, 120, 30), "Maximum Speed");
             GUI.Label(new Rect(235, y, 120, 30), flock.speed.ToString("F2"));
 
-            //Flock Turn Speed
+            //Flock Accleration
             y += 35;
-            GUI.Label(new Rect(130, y + 10, 100, 30), "0");
-            GUI.Label(new Rect(210, y + 10, 100, 30), "5");
-            flock.turnSpeed = GUI.HorizontalSlider(new Rect(130, y + 5, 100, 30), flock.turnSpeed, 0.0f, 5.0f);
-            GUI.Label(new Rect(5, y, 120, 30), "Turn Speed");
-            GUI.Label(new Rect(235, y, 120, 30), flock.turnSpeed.ToString("F2"));
+            GUI.Label(new Rect(130, y + 10, 100, 30), "2");
+            GUI.Label(new Rect(210, y + 10, 100, 30), "10");
+            flock.acceleration = GUI.HorizontalSlider(new Rect(130, y + 5, 100, 30), flock.acceleration, 2f, 10f);
+            GUI.Label(new Rect(5, y, 120, 30), "Acceleration");
+            GUI.Label(new Rect(235, y, 120, 30), flock.acceleration.ToString("F2"));
 
             //Cohesion Weight
             y += 35;
@@ -141,14 +142,6 @@ public class Menu : MonoBehaviour
             GUI.Label(new Rect(5, y, 120, 30), "Focal Point Weight");
             GUI.Label(new Rect(235, y, 120, 30), flock.focalPointWeight.ToString("F2"));
 
-            //Gravity
-            y += 35;
-            GUI.Label(new Rect(130, y + 10, 100, 30), "0");
-            GUI.Label(new Rect(210, y + 10, 100, 30), "2");
-            flock.gravity = GUI.HorizontalSlider(new Rect(130, y + 5, 100, 30), flock.gravity, 0.0f, 2.0f);
-            GUI.Label(new Rect(5, y, 120, 30), "Gavity");
-            GUI.Label(new Rect(235, y, 120, 30), flock.gravity.ToString("F2"));
-
             //Neighbours to Consider
             y += 35;
             GUI.Label(new Rect(130, y + 10, 100, 30), "1");
@@ -159,25 +152,25 @@ public class Menu : MonoBehaviour
 
             //Neighbour Radius
             y += 35;
-            GUI.Label(new Rect(130, y + 10, 100, 30), "0.1");
+            GUI.Label(new Rect(130, y + 10, 100, 30), "0");
             GUI.Label(new Rect(210, y + 10, 100, 30), "2");
-            flock.neighborRadius = GUI.HorizontalSlider(new Rect(130, y + 5, 100, 30), flock.neighborRadius, 0.1f, 2.0f);
+            flock.neighborRadius = GUI.HorizontalSlider(new Rect(130, y + 5, 100, 30), flock.neighborRadius, 0f, 2.0f);
             GUI.Label(new Rect(5, y, 120, 30), "Neighbour Radius");
             GUI.Label(new Rect(235, y, 120, 30), flock.neighborRadius.ToString("F0"));
 
             //Predator Detection Distance
             y += 35;
-            GUI.Label(new Rect(130, y + 10, 100, 30), "0.1");
-            GUI.Label(new Rect(210, y + 10, 100, 30), "5");
-            flock.predatorDetectionDist = GUI.HorizontalSlider(new Rect(130, y + 5, 100, 30), flock.predatorDetectionDist, 0.1f, 5.0f);
+            GUI.Label(new Rect(130, y + 10, 100, 30), "0");
+            GUI.Label(new Rect(210, y + 10, 100, 30), "10");
+            flock.predatorDetectionDist = GUI.HorizontalSlider(new Rect(130, y + 5, 100, 30), flock.predatorDetectionDist, 0f, 10.0f);
             GUI.Label(new Rect(5, y, 120, 30), "Pred Detect Dist");
             GUI.Label(new Rect(235, y, 120, 30), flock.predatorDetectionDist.ToString("F0"));
 
             //Predator Weight
             y += 35;
             GUI.Label(new Rect(130, y + 10, 100, 30), "0");
-            GUI.Label(new Rect(210, y + 10, 100, 30), "5");
-            flock.predatorWeight = GUI.HorizontalSlider(new Rect(130, y + 5, 100, 30), flock.predatorWeight, 0.0f, 5.0f);
+            GUI.Label(new Rect(210, y + 10, 100, 30), "20");
+            flock.predatorWeight = GUI.HorizontalSlider(new Rect(130, y + 5, 100, 30), flock.predatorWeight, 0.0f, 20.0f);
             GUI.Label(new Rect(5, y, 120, 30), "Pred Weight");
             GUI.Label(new Rect(235, y, 120, 30), flock.predatorWeight.ToString("F2"));
 
@@ -194,38 +187,47 @@ public class Menu : MonoBehaviour
         }
         else if (settingsType == 1)
         {
-            GUI.Box(new Rect(0, 30, 265, 440), "Predator Settings");
+            GUI.Box(new Rect(0, 30, 265, 230), "Predator Settings");
 
-            //Speed
+            //Max Speed
             int y = 50;
             GUI.Label(new Rect(130, y + 10, 100, 30), "0");
-            GUI.Label(new Rect(210, y + 10, 100, 30), "1");
-            predMoveSpeed = GUI.HorizontalSlider(new Rect(130, y + 5, 100, 30), predMoveSpeed, 0.0f, 1.0f);
-            GUI.Label(new Rect(5, y, 120, 30), "Speed");
+            GUI.Label(new Rect(210, y + 10, 100, 30), "10");
+            predMoveSpeed = GUI.HorizontalSlider(new Rect(130, y + 5, 100, 30), predMoveSpeed, 0.0f, 10.0f);
+            GUI.Label(new Rect(5, y, 120, 30), "Max Casual Speed");
             GUI.Label(new Rect(235, y, 120, 30), predMoveSpeed.ToString("F1"));
+
+
+            //Casual Acceleration
+            y += 35;
+            GUI.Label(new Rect(130, y + 10, 100, 30), "0");
+            GUI.Label(new Rect(210, y + 10, 100, 30), "10");
+            predMoveAcceleration = GUI.HorizontalSlider(new Rect(130, y + 5, 100, 30), predMoveAcceleration, 0.0f, 10.0f);
+            GUI.Label(new Rect(5, y, 120, 30), "Casual Acceleration");
+            GUI.Label(new Rect(235, y, 120, 30), predMoveAcceleration.ToString("F1"));
 
             //Dive Speed
             y += 35;
             GUI.Label(new Rect(130, y + 10, 100, 30), "0");
-            GUI.Label(new Rect(210, y + 10, 100, 30), "1");
-            predStoopSpeed = GUI.HorizontalSlider(new Rect(130, y + 5, 100, 30), predStoopSpeed, 0.0f, 1.0f);
-            GUI.Label(new Rect(5, y, 120, 30), "Dive Speed");
+            GUI.Label(new Rect(210, y + 10, 100, 30), "10");
+            predStoopSpeed = GUI.HorizontalSlider(new Rect(130, y + 5, 100, 30), predStoopSpeed, 0.0f, 10.0f);
+            GUI.Label(new Rect(5, y, 120, 30), "Max Dive Speed");
             GUI.Label(new Rect(235, y, 120, 30), predStoopSpeed.ToString("F1"));
 
-            //Turn Speed
+            //Dive Speed Acceleration
             y += 35;
-            GUI.Label(new Rect(130, y + 10, 100, 30), "0");
-            GUI.Label(new Rect(210, y + 10, 100, 30), "2");
-            predMoveTurnSpeed = GUI.HorizontalSlider(new Rect(130, y + 5, 100, 30), predMoveTurnSpeed, 0.0f, 2.0f);
-            GUI.Label(new Rect(5, y, 120, 30), "Turn Speed");
-            GUI.Label(new Rect(235, y, 120, 30), predMoveTurnSpeed.ToString("F1"));
+            GUI.Label(new Rect(130, y + 10, 100, 30), "1");
+            GUI.Label(new Rect(210, y + 10, 100, 30), "20");
+            predStoopAcceleration = GUI.HorizontalSlider(new Rect(130, y + 5, 100, 30), predStoopAcceleration, 0.0f, 20.0f);
+            GUI.Label(new Rect(5, y, 120, 30), "Dive Acceleration");
+            GUI.Label(new Rect(235, y, 120, 30), predStoopAcceleration.ToString("F1"));
 
             //Circle Height
             y += 35;
-            GUI.Label(new Rect(130, y + 10, 100, 30), "0");
-            GUI.Label(new Rect(210, y + 10, 100, 30), "15");
-            predHoverHeight = GUI.HorizontalSlider(new Rect(130, y + 5, 100, 30), predHoverHeight, 0.0f, 15.0f);
-            GUI.Label(new Rect(5, y, 120, 30), "Circle Height");
+            GUI.Label(new Rect(130, y + 10, 100, 30), "2");
+            GUI.Label(new Rect(210, y + 10, 100, 30), "20");
+            predHoverHeight = GUI.HorizontalSlider(new Rect(130, y + 5, 100, 30), predHoverHeight, 2f, 20f);
+            GUI.Label(new Rect(5, y, 120, 30), "Glide Height");
             GUI.Label(new Rect(235, y, 120, 30), predHoverHeight.ToString("F0"));
 
             //Reset values and save values
@@ -241,7 +243,7 @@ public class Menu : MonoBehaviour
         }
         else if (settingsType == 2)
         {
-            GUI.Box(new Rect(0, 30, 265, 440), "Simulation Settings");
+            GUI.Box(new Rect(0, 30, 265, 60), "Simulation Settings");
 
             int y = 50;
             if (GUI.Button(new Rect(5, y, 120, 30), "Reset"))

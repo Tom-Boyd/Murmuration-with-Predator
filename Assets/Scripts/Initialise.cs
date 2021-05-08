@@ -47,6 +47,7 @@ public class Initialise : MonoBehaviour
         );
         predatorAgent.name = "Predator";
         predatorAgent.Initialize(flock);
+        flock.predatorAgent = predatorAgent;
 
         //Spawn in the flock of birds
         for (int i = 0; i < flock.startingCount; i++)
@@ -69,6 +70,8 @@ public class Initialise : MonoBehaviour
         //Setup Camera
         cam = Instantiate(camPrefab, flock.focalPoint, camPrefab.transform.rotation);
         cam.Initialise(flock, flock.agents[0].transform, flock.agents[0].transform, predatorAgent.transform);
+
+        flock.runSimulation = true;
     }
 
     public void Reset()

@@ -13,11 +13,10 @@ public class PredatorAgent : MonoBehaviour
     private GameObject target;
     private Animator falconAnimator;
 
-    const float hoverSpeed = 0.3f;
-    const float stoopTurnSpeed = 3f;
-    const float hoverTurnSpeed = 1.5f;
-    const float hoverCircleSpeed = 0.5f;
-    const float hoverCircleRadius = 1;
+    public float hoverSpeed = 0.3f;
+    public float hoverTurnSpeed = 1.5f;
+    public float hoverCircleSpeed = 0.5f;
+    public float hoverCircleRadius = 1;
 
     private Flock flock;
 
@@ -77,13 +76,22 @@ public class PredatorAgent : MonoBehaviour
         Vector3 hoverPoint = new Vector3(0, Menu.predHoverHeight, 0) + flock.focalPoint;
         Vector3 targetDirection = hoverPoint - transform.position;
         targetDirection = targetDirection.normalized;
-        float singleStep = Menu.predMoveTurnSpeed * Time.deltaTime;
-        Vector3 direction = Vector3.RotateTowards(transform.forward, targetDirection, singleStep, 0.0f);
-        transform.rotation = Quaternion.LookRotation(direction);
 
-        velocity = direction * Menu.predMoveSpeed;
-        velocity += Vector3.down * flock.gravity;
-        transform.position += velocity;
+        Vector3 accelerationV = targetDirection * Menu.predMoveAcceleration;
+        Vector3 newVelocity = velocity + accelerationV * Time.deltaTime;
+        if (newVelocity.magnitude < Menu.predMoveSpeed)
+        {
+            velocity = newVelocity;
+        }
+        else
+        {
+            velocity = newVelocity.normalized * Menu.predMoveSpeed;
+        }
+        float limit = 0.8f * velocity.magnitude;
+        if (velocity.y > limit) velocity.y = limit;
+        if (velocity.y < -limit) velocity.y = -limit;
+        transform.position += velocity * Time.deltaTime;
+        transform.rotation = Quaternion.LookRotation(velocity);
 
         //return true if its within 1 unit of target position
         float dist = Vector3.Distance(hoverPoint, transform.position);
@@ -105,10 +113,12 @@ public class PredatorAgent : MonoBehaviour
         targetDirection = targetDirection.normalized;
         float singleStep = hoverTurnSpeed * Time.deltaTime;
         Vector3 direction = Vector3.RotateTowards(transform.forward, targetDirection, singleStep, 0.0f);
+        float limit = 0.2f;
+        if (direction.y > limit) direction.y = limit;
+        if (direction.y < -limit) direction.y = -limit;
         transform.rotation = Quaternion.LookRotation(direction);
 
         velocity = direction * hoverSpeed;
-        velocity += Vector3.down * flock.gravity;
         transform.position += velocity;
 
         HoverTimeCounter += Time.deltaTime;
@@ -123,40 +133,40 @@ public class PredatorAgent : MonoBehaviour
     private void InitStoop(GameObject target)
     {
         this.target = target;
+        keepGoing = false;
     }
 
+    bool keepGoing = false;
     private bool Stoop()
     {
         Vector3 targetPos = target.transform.position;
-        Vector3 targetDirection = (targetPos - transform.position).normalized;
-        float singleStep = stoopTurnSpeed * Time.deltaTime;
-        Vector3 direction = Vector3.RotateTowards(transform.forward, targetDirection, singleStep, 0.0f);
-        if (direction.y < -0.8f)
+        if (!keepGoing)
         {
-            velocity = direction * Menu.predStoopSpeed;
-            stooping = true;
-        }
-        else
-        {
-            if (!stooping)
+            Vector3 targetDirection = (targetPos - transform.position).normalized;
+
+            Vector3 accelerationV = targetDirection * Menu.predStoopAcceleration;
+            Vector3 newVelocity = velocity + accelerationV * Time.deltaTime;
+            if (newVelocity.magnitude < Menu.predStoopSpeed)
             {
-                velocity = direction * Menu.predMoveSpeed;
+                velocity = newVelocity;
             }
             else
             {
-                direction.y = -0.8f;
+                velocity = newVelocity.normalized * Menu.predStoopSpeed;
             }
         }
-        if (!(transform.position.y < targetPos.y))
-            transform.rotation = Quaternion.LookRotation(direction);
+        transform.position += velocity * Time.deltaTime;
+        transform.rotation = Quaternion.LookRotation(velocity);
 
-        transform.position += velocity;
-
-        if (transform.position.y < targetPos.y - 4)
+        if (transform.position.y < targetPos.y - 6)
         {
             stooping = false;
             return true;
+        } else if (transform.position.y < targetPos.y)
+        {
+            keepGoing = true;
         }
-        else return false;
+
+        return false;
     }
 }
