@@ -25,8 +25,26 @@ public class Flock : MonoBehaviour
     public float predatorDetectionDist = 20f;
     public float turnSpeed = 0.5f;
     public float agentDensity = 0.01f;
-    public bool runSimulation = false;
     public bool runMetrics = false;
+
+    public double k = 15; //extension collision penalty (> = worse)
+    public double ro = 180; //polarization collision penalty (> = worse)
+    //Weights for quality metric
+    //  0 < sigma, gamma < 1
+    //  sigma + gamma = 1
+    public double sigma = 0.5; //extension weight for quality
+    public double gamma = 0.5; //polarization weight for quality
+    public double runningExtensionSum;
+    public double runningPolarizationSum;
+    public double runningQualitySum;
+    public double cnsExtT;
+    public double cnsPolT;
+    public double qltyT;
+    public double avgExtension;
+    public double avgPolarization;
+    public double quality;
+    public int itter = 0;
+
 
     const float hardSphere = 0.2f;
     const float blindAngle = 180 - (9f / 2);
@@ -38,9 +56,8 @@ public class Flock : MonoBehaviour
 
     void Update()
     {
-        if (runSimulation)
+        if (Menu.runSimulation)
         {
-            // Create a native array of a single float to store the result. This example waits for the job to complete for illustration purposes
             NativeArray<Vector3> newVelocities = new NativeArray<Vector3>(agents.Count, Allocator.TempJob);
             NativeArray<bool> escaping = new NativeArray<bool>(agents.Count, Allocator.TempJob);
             NativeArray<Vector3> agentPositions = new NativeArray<Vector3>(agents.Count, Allocator.TempJob);
@@ -79,11 +96,98 @@ public class Flock : MonoBehaviour
             JobHandle handle = jobData.Schedule(newVelocities.Length, 1);
             // Wait for the job to complete
             handle.Complete();
-            // All copies of the NativeArray point to the same memory, you can access the result in "your" copy of the NativeArray
+
+            Vector3 sumDirection = new Vector3();
+            Vector3 flockCentre = new Vector3();
+            List<int> colliding = new List<int>();
+            if (runMetrics)
+            {
+                itter++;
+                float x = 0;
+                float y = 0;
+                float z = 0;
+                for (int i = 0; i < agents.Count; i++)
+                {
+                    Vector3 direction = agents[i].AgentVelocity.normalized;
+                    sumDirection = new Vector3(direction.x + sumDirection.x, direction.y + sumDirection.y, direction.z + sumDirection.z);
+
+                    Vector3 position = agents[i].transform.position;
+                    x += position.x;
+                    y += position.y;
+                    z += position.z;
+                }
+
+                //Find colliding Starlings
+                for (int i = 0; i < agents.Count; i++)
+                {
+                    if (colliding.Contains(i)) continue;
+                    List<int> neighbours = grid.GetNeighbours(i);
+                    bool collided = false;
+                    for (int neighbourIndex = 0; neighbourIndex < neighbours.Count; neighbourIndex++)
+                    {
+                        if (Vector3.Distance(agents[i].transform.position, agents[neighbourIndex].transform.position) < 0.1f)
+                        {
+                            collided = true;
+                            colliding.Add(neighbourIndex);
+                        }
+                    }
+                    if (collided) colliding.Add(i);
+                }
+                sumDirection = sumDirection.normalized;
+                flockCentre = new Vector3(x / agents.Count, y / agents.Count, z / agents.Count);
+            }
+
+            double distanceSum = 0;
+            double maxE = 0;
+            double deltaAngleSum = 0;
             for (int i = 0; i < agents.Count; i++)
             {
+                if (runMetrics)
+                {
+                    //EXTENSION
+                    //Finds distance of all starlings to the flock centre
+                    double d = Mathf.Abs(Vector3.Distance(agents[i].transform.position, focalPoint));
+                    distanceSum += d;
+
+                    //updates max extension
+                    if (d > maxE) { maxE = d; }
+
+                    //POLARIZATION
+                    Vector3 direction = agents[i].AgentVelocity.normalized;
+                    float dotAngle = sumDirection.x * direction.x + sumDirection.y * direction.y + sumDirection.z * direction.z;
+                    deltaAngleSum += (180 / Mathf.PI) * Mathf.Cos(dotAngle);
+                }
                 agents[i].Move(newVelocities[i], escaping[i]);
                 grid.UpdatePosition(int.Parse(agents[i].gameObject.name), agents[i].transform.position);
+            }
+
+            
+
+
+            if (runMetrics)
+            {
+                //Consistency of Extension
+                //  How Well boids stick together
+                //  normalized between 0 & 1 (closer to 1 is better)
+                Debug.Log("((" + distanceSum + " + " + maxE + " * (" + colliding.Count + ")) / (" + maxE + " * " + agents.Count + "))");
+                cnsExtT = ((distanceSum + maxE * (colliding.Count)) / (maxE * agents.Count));
+                //Consistency of polarization
+                //  How much the boids are going the same direction
+                //  normaized between 0 & 1 (closer to 1 is better)
+                cnsPolT = 1 - ((deltaAngleSum + ro * colliding.Count) / (ro * agents.Count));
+                ///////////////////////////////////
+                //quality
+                //  weighted sum of polarization and extension
+                qltyT = sigma * cnsExtT + gamma * cnsPolT;
+
+                //averaging extension and polarization
+                runningExtensionSum += cnsExtT;
+                avgExtension = runningExtensionSum / (itter);
+                runningPolarizationSum += cnsPolT;
+                avgPolarization = runningPolarizationSum / (itter);
+                //calculates the running quality over the entire simulation
+                runningQualitySum += qltyT;
+                quality = runningQualitySum / (itter);
             }
 
             // Free the memory allocated by the result array

@@ -71,7 +71,7 @@ public class Initialise : MonoBehaviour
         cam = Instantiate(camPrefab, flock.focalPoint, camPrefab.transform.rotation);
         cam.Initialise(flock, flock.agents[0].transform, flock.agents[0].transform, predatorAgent.transform);
 
-        flock.runSimulation = true;
+        Menu.runSimulation = true;
     }
 
     public void Reset()

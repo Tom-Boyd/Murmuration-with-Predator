@@ -243,7 +243,7 @@ public class Menu : MonoBehaviour
         }
         else if (settingsType == 2)
         {
-            GUI.Box(new Rect(0, 30, 265, 60), "Simulation Settings");
+            GUI.Box(new Rect(0, 30, 265, 330), "Simulation Settings");
 
             int y = 50;
             if (GUI.Button(new Rect(5, y, 120, 30), "Reset"))
@@ -255,16 +255,59 @@ public class Menu : MonoBehaviour
                 if (runSimulation)
                 {
                     runSimulation = false;
-                    Time.timeScale = 1;
+                    Time.timeScale = 0;
                     pausePlay = "Resume";
                 }
                 else
                 {
                     runSimulation = true;
-                    Time.timeScale = 0;
+                    Time.timeScale = 1;
                     pausePlay = "Pause";
                 }
             }
+            y += 35;
+            if (!flock.runMetrics)
+            {
+                if (GUI.Button(new Rect(5, y, 255, 30), "Run Metrics"))
+                {
+                    flock.runMetrics = true;
+                    flock.itter = 0;
+                    flock.cnsExtT = 0;
+                    flock.cnsPolT = 0;
+                    flock.qltyT = 0;
+                    flock.avgExtension = 0;
+                    flock.avgPolarization = 0;
+                    flock.quality = 0;
+                }
+            }
+            else
+            {
+                if (GUI.Button(new Rect(5, y, 255, 30), "Stop Running Metrics"))
+                {
+                    flock.runMetrics = false;
+                }
+            }
+            y += 35;
+            GUI.Label(new Rect(5, y, 150, 30), "Iteration:");
+            GUI.Label(new Rect(180, y, 120, 30), flock.itter.ToString("F1"));
+            y += 35;
+            GUI.Label(new Rect(5, y, 150, 30), "Extension Consistency:");
+            GUI.Label(new Rect(180, y, 120, 30), flock.cnsExtT.ToString("F1"));
+            y += 35;
+            GUI.Label(new Rect(5, y, 150, 30), "Polarization Consistency:");
+            GUI.Label(new Rect(180, y, 120, 30), flock.cnsPolT.ToString("F1"));
+            y += 35;
+            GUI.Label(new Rect(5, y, 150, 30), "Quality:");
+            GUI.Label(new Rect(180, y, 120, 30), flock.qltyT.ToString("F1"));
+            y += 35;
+            GUI.Label(new Rect(5, y, 150, 30), "Average Extension:");
+            GUI.Label(new Rect(180, y, 120, 30), flock.avgExtension.ToString("F1"));
+            y += 35;
+            GUI.Label(new Rect(5, y, 150, 30), "Average Polarization:");
+            GUI.Label(new Rect(180, y, 120, 30), flock.avgPolarization.ToString("F1"));
+            y += 35;
+            GUI.Label(new Rect(5, y, 150, 30), "Average Quality:");
+            GUI.Label(new Rect(180, y, 120, 30), flock.quality.ToString("F1"));
         }
         else if (settingsType == 3)
         {
