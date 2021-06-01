@@ -125,7 +125,7 @@ public class Flock : MonoBehaviour
                     bool collided = false;
                     for (int neighbourIndex = 0; neighbourIndex < neighbours.Count; neighbourIndex++)
                     {
-                        if (Vector3.Distance(agents[i].transform.position, agents[neighbourIndex].transform.position) < 0.1f)
+                        if (Vector3.Distance(agents[i].transform.position, agents[neighbourIndex].transform.position) < 0.05f)
                         {
                             collided = true;
                             colliding.Add(neighbourIndex);
@@ -170,7 +170,7 @@ public class Flock : MonoBehaviour
                 //  How Well boids stick together
                 //  normalized between 0 & 1 (closer to 1 is better)
                 Debug.Log("((" + distanceSum + " + " + maxE + " * (" + colliding.Count + ")) / (" + maxE + " * " + agents.Count + "))");
-                cnsExtT = ((distanceSum + maxE * (colliding.Count)) / (maxE * agents.Count));
+                cnsExtT = 1 - ((distanceSum + maxE * (colliding.Count)) / (maxE * agents.Count));
                 //Consistency of polarization
                 //  How much the boids are going the same direction
                 //  normaized between 0 & 1 (closer to 1 is better)

@@ -604,7 +604,21 @@ MonoBehaviour:
   predatorDetectionDist: 20
   turnSpeed: 0.5
   agentDensity: 0.0002
-  runSimulation: 0
+  runMetrics: 0
+  k: 15
+  ro: 180
+  sigma: 0.5
+  gamma: 0.5
+  runningExtensionSum: 0
+  runningPolarizationSum: 0
+  runningQualitySum: 0
+  cnsExtT: 0
+  cnsPolT: 0
+  qltyT: 0
+  avgExtension: 0
+  avgPolarization: 0
+  quality: 0
+  itter: 0
   dataStorage: {fileID: 1986423041}
   initialise: {fileID: 1986423042}
   grid: {fileID: 1986423044}
